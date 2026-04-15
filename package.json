@@ -1,0 +1,27 @@
+{
+  "name": "lingora",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.9.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:generate": "pnpm --filter @lingora/db generate",
+    "db:push": "pnpm --filter @lingora/db push",
+    "db:migrate": "pnpm --filter @lingora/db migrate",
+    "stripe:setup": "pnpm --filter @lingora/web exec tsx scripts/setup-stripe.ts"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3",
+    "prettier": "^3.4.2",
+    "@types/node": "^22.10.5"
+  },
+  "engines": {
+    "node": ">=18.18.0",
+    "pnpm": ">=9"
+  }
+}
