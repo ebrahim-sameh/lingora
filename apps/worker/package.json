@@ -1,0 +1,30 @@
+{
+  "name": "@lingora/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'no-op'",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@cartesia/cartesia-js": "^2.2.0",
+    "@google/genai": "^0.7.0",
+    "@lingora/shared": "workspace:*",
+    "@livekit/rtc-node": "^0.13.8",
+    "livekit-server-sdk": "^2.9.4",
+    "undici": "^6.21.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
