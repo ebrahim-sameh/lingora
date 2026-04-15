@@ -53,7 +53,7 @@ async function joinRoom(roomName: string): Promise<void> {
 
   const room = new Room();
   try {
-    await room.connect(env.livekitUrl, jwt, new RoomOptions());
+    await room.connect(env.livekitUrl, jwt);
   } catch (err) {
     logger.error('room connect failed', { roomName, err: String(err) });
     return;
@@ -126,5 +126,3 @@ main().catch((err) => {
   logger.error('fatal worker error', err);
   process.exit(1);
 });
-
-export { WebhookReceiver };

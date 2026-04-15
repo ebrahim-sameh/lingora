@@ -43,32 +43,41 @@ export async function speakText(
       transcript: text,
       contextId: options.contextId,
       language: options.targetLanguage.split('-')[0] ?? options.targetLanguage,
-      continue: false,
     });
 
-    stream.on('message', (message: unknown) => {
-      if (
-        typeof message === 'object' &&
-        message !== null &&
-        'type' in (message as Record<string, unknown>) &&
-        (message as { type: string }).type === 'chunk'
-      ) {
-        const data = (message as { data?: string }).data;
-        if (data) {
-          options.onAudio(Buffer.from(data, 'base64'));
+    const done = new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => resolve(), 15000);
+      stream.on('message', (raw: unknown) => {
+        let parsed: Record<string, unknown> | null = null;
+        if (typeof raw === 'string') {
+          try {
+            parsed = JSON.parse(raw) as Record<string, unknown>;
+          } catch {
+            return;
+          }
+        } else if (typeof raw === 'object' && raw !== null) {
+          parsed = raw as Record<string, unknown>;
         }
-      }
+        if (!parsed) return;
+
+        const type = parsed.type;
+        if (type === 'chunk' && typeof parsed.data === 'string') {
+          options.onAudio(Buffer.from(parsed.data, 'base64'));
+        } else if (type === 'done') {
+          clearTimeout(timeout);
+          resolve();
+        } else if (type === 'error') {
+          const errMessage =
+            typeof parsed.message === 'string' ? parsed.message : 'cartesia error';
+          options.logger.error('cartesia stream error', errMessage);
+          options.onError(new Error(errMessage));
+          clearTimeout(timeout);
+          resolve();
+        }
+      });
     });
 
-    stream.on('error', (err: unknown) => {
-      options.logger.error('cartesia stream error', err);
-      options.onError(err);
-    });
-
-    await new Promise<void>((resolve) => {
-      stream.on('close', () => resolve());
-    });
-
+    await done;
     ws.disconnect();
   } catch (err) {
     options.logger.error('cartesia synth failed', err);
