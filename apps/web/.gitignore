@@ -1,0 +1,7 @@
+.next
+.vercel
+.turbo
+node_modules
+.env*
+!.env.example
+next-env.d.ts
